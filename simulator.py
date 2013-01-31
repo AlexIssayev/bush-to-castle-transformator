@@ -1,6 +1,7 @@
 #!/bin/python
 
 from common import CommonEqualityMixin
+from pieces import Piece
 
 class Board:
 	
@@ -121,6 +122,12 @@ class View:
 		return self._score
 		
 	def simulate_move(self, position, piece):
+		new_board, delta, new_piece = self._simulate_place_piece(position, piece)
+		new_view = View(board, self._score + delta)
+		if new_piece is not None:
+			return new_view.simulate_move(position, new_piece)
+		else
+			return new_view
 		
 	def _simulate_place_piece(self, position, piece):
 		if self._board.piece_at(position) is not None:
@@ -133,10 +140,10 @@ class View:
 			new_board.place_piece(position, piece)
 			return new_board, delta, None
 		else:
-			new_piece = piece.make_next_piece()
+			new_piece = piece.make_next_piece(len(pos_match) >= 3)
 			new_board = self._board.copy_of(set(pos_match))
-			
-			return new_board
+			delta += new_piece._value
+			return new_board, delta, new_piece
 	
 class CurrentView(View):
 	
@@ -147,5 +154,5 @@ class CurrentView(View):
 	def current_piece(self):
 		return self._current_piece
 		
-	def simulate_move(self, position):
+	def move_with_current_piece(self, position):
 		return super(CurrentView, self).simulate_move(self, self._current_piece, position)
