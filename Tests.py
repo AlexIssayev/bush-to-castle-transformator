@@ -1,6 +1,7 @@
 import unittest
 import pieces, simulator
 from pieces import Piece
+from simulator import Position, Queue, Board, View, CurrentView
 
 class Bar(Piece):
 	name = "bar"
@@ -15,9 +16,9 @@ class PieceTest(unittest.TestCase):
 
 	def test_sanity(self):
 		x = Foo()
-		self.assertEquals(x.get_name(), "foo")
-		self.assertEquals(x.get_value(), 5)
-		self.assertEquals(x.next_piece, Bar)
+		self.assertEqual(x.get_name(), "foo")
+		self.assertEqual(x.get_value(), 5)
+		self.assertEqual(x.next_piece, Bar)
 
 	def test_piece_can_match_with_same_type(self):
 		x = Foo()
@@ -46,12 +47,12 @@ class PieceTest(unittest.TestCase):
 
 	def test_piece_has_double_score_if_advanced(self):
 		x = Foo(is_advanced = True)
-		self.assertEquals(x.get_value(), 10)
+		self.assertEqual(x.get_value(), 10)
 
 	def test_make_next_piece(self):
 		x = Foo()
 		y = x.make_next_piece()
-		self.assertTrue(y.__class__ is Bar)
+		self.assertIs(type(y), Bar)
 
 	def test_make_next_piece_advanced(self):
 		x = Foo()
@@ -62,6 +63,29 @@ class PieceTest(unittest.TestCase):
 		x = Bar()
 		with self.assertRaises(TypeError):
 			x.make_next_piece()
+
+	def test_triple_castle(self):
+		triple_castle = pieces.FloatingCastle(is_advanced = True)
+		self.assertEqual(triple_castle.get_name(), "Triple Castle")
+		self.assertEqual(triple_castle.get_value(), 500000)
+
+class PositionTest(unittest.TestCase):
+
+	def test_position_shift(self):
+		origin = Position(0, 0)
+		diagonal_down_right = origin.shift(1, 1)
+		self.assertTrue(origin is not diagonal_down_right)
+		self.assertEqual(diagonal_down_right.x(), 1)
+		self.assertEqual(diagonal_down_right.y(), 1)
+
+	def test_position_adjacent(self):
+		origin = Position(0, 0)
+		cardinals = [Position(0,1),
+		             Position(1,0),
+		             Position(-1, 0),
+		             Position(0, -1)]
+		self.maxDiff = None
+		self.assertItemsEqual([p for p in origin.adjacent()], cardinals)
 
 if __name__ == '__main__':
     unittest.main()

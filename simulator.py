@@ -3,7 +3,7 @@
 from common import CommonEqualityMixin
 from pieces import Piece
 
-class Board:
+class Board(object):
 	
 	def __init__(self, size = 5):
 		self._board = [None for i in range(size ** 2)]
@@ -98,7 +98,20 @@ class Position(CommonEqualityMixin):
 		for p in self.up(), self.down(), self.right(), self.left():
 			yield p
 
-class Queue:
+	def __str__(self):
+		return "<x : {}, y : {}>".format(self._x, self._y)
+
+	def __eq__(self, other):
+		return (isinstance(other, self.__class__)
+		       and self.x() == other.x() 
+		       and self.y() == other.y())
+
+	def __lt__(self, other):
+		if not isinstance(other, self.__class__):
+			raise TypeError("Cannot compare a position with '{}'".format(type(other)))
+		return self.y() < other.y() if self.x() == other.x() else self.x() < other.x()
+
+class Queue(object):
 	
 	def __init__(self):
 		pass
@@ -109,7 +122,7 @@ class Queue:
 	def next_piece():
 		pass
 
-class View:
+class View(object):
 	
 	def __init__(self, board, score):
 		self._board = board

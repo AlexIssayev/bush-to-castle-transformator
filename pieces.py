@@ -36,9 +36,9 @@ class FloatingCastle(Piece):
 	name = "Floating Castle"
 	next_piece = None
 	
-	def __init__(self, is_special = False):
-		super(FloatingCastle, self).__init__(is_special)
-		if is_special:
+	def __init__(self, is_advanced = False):
+		super(FloatingCastle, self).__init__(is_advanced)
+		if is_advanced:
 			self.name = "Triple Castle"
 			self.value = 500000
 
