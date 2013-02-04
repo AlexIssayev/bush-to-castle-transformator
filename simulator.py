@@ -20,7 +20,7 @@ class Board:
 	def place_piece(self, position, piece):
 		if piece is None:
 			raise TypeError("Cannot place a piece of type 'None'")
-		else if self.piece_at(position) is None:
+		elif self.piece_at(position) is None:
 			raise ValueError("A piece is already present at " + position)
 		else:
 			self._board[self._position_as_index(position)] = piece
@@ -55,7 +55,7 @@ class Board:
 		for p in self.adjacent_spaces(position):
 			if p not in visited:
 				visited.add(p)
-				if self.piece_at(p).name() == piece.name():
+				if self.piece_at(p).can_match_with(piece):
 					res += [p]
 					res += self._visit(p, piece, visited)
 		return res
@@ -126,7 +126,7 @@ class View:
 		new_view = View(board, self._score + delta)
 		if new_piece is not None:
 			return new_view.simulate_move(position, new_piece)
-		else
+		else:
 			return new_view
 		
 	def _simulate_place_piece(self, position, piece):
