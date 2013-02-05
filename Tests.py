@@ -155,13 +155,45 @@ class BoardTest(unittest.TestCase):
 		actual_positions = [p for p in board.positions()]
 		self.assertItemsEqual(actual_positions, expected_positions)
 
-	def test_open_positions(self):
+	def test_board_open_positions(self):
 		board = Board(size = 2)
 		board.place_piece(Position(0, 0), Foo())
 		board.place_piece(Position(1, 1), Foo())
 		expected_positions = [Position(0, 1),
 		                      Position(1, 0)]
 		actual_positions = [p for p in board.open_positions()]
+		self.assertItemsEqual(actual_positions, expected_positions)
+
+	def test_board_is_valid_position(self):
+		board = Board(size = 3)
+		origin = Position(0, 0)
+		center = Position(1, 1)
+		bottom_right = Position(2, 2)
+		self.assertTrue(board.is_valid_position(origin))
+		self.assertTrue(board.is_valid_position(center))
+		self.assertTrue(board.is_valid_position(bottom_right))
+
+	def test_boad_is_valid_position_out_of_bounds(self):
+		board = Board(size = 3)
+		oob_top_left = Position(-1, -1)
+		oob_bottom_right = Position(3, 3)
+		self.assertFalse(board.is_valid_position(oob_top_left))
+		self.assertFalse(board.is_valid_position(oob_bottom_right))
+
+	def test_board_adjacent_positions(self):
+		board = Board(size = 3)
+		expected_positions = [Position(1, 0),
+		                      Position(0, 1),
+		                      Position(2, 1),
+		                      Position(1, 2)]
+		actual_positions = [p for p in board.adjacent_positions(Position(1, 1))]
+		self.assertItemsEqual(actual_positions, expected_positions)
+
+	def test_board_adjacent_positions_on_corner(self):
+		board = Board(size = 2)
+		expected_positions = [Position(1, 0),
+		                      Position(0, 1)]
+		actual_positions = [p for p in board.adjacent_positions(Position(1, 1))]
 		self.assertItemsEqual(actual_positions, expected_positions)
 
 if __name__ == '__main__':

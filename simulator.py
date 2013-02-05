@@ -34,13 +34,13 @@ class Board(object):
 	def size(self):
 		return self._size
 	
-	def is_valid_space(self, position):
+	def is_valid_position(self, position):
 		index = self._position_as_index(position)
 		return 0 <= index < len(self._board)
 		
-	def adjacent_spaces(self, position):
+	def adjacent_positions(self, position):
 		for p in position.adjacent():
-			if self.is_valid_space(p):
+			if self.is_valid_position(p):
 				yield p
 	
 	def positions(self):
@@ -61,7 +61,7 @@ class Board(object):
 	
 	def _visit(self, position, piece, visited):
 		res = []
-		for p in self.adjacent_spaces(position):
+		for p in self.adjacent_positions(position):
 			if p not in visited:
 				visited.add(p)
 				if self.piece_at(p).can_match_with(piece):
