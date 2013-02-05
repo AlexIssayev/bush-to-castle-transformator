@@ -10,7 +10,7 @@ class Board(object):
 		self._size = size
 	
 	def piece_at(self, position):
-		return self._board[position._as_array_index()]
+		return self._board[self._position_as_index(position)]
 		
 	def remove_piece(self, position):
 		piece = self.piece_at(position)
@@ -20,8 +20,8 @@ class Board(object):
 	def place_piece(self, position, piece):
 		if piece is None:
 			raise TypeError("Cannot place a piece of type 'None'")
-		elif self.piece_at(position) is None:
-			raise ValueError("A piece is already present at " + position)
+		elif self.piece_at(position) is not None:
+			raise ValueError("A piece is already present at " + str(position))
 		else:
 			self._board[self._position_as_index(position)] = piece
 			
@@ -31,7 +31,7 @@ class Board(object):
 	def _index_as_position(self, index):
 		return Position(index // self._size, index % self._size)
 		
-	def get_size(self):
+	def size(self):
 		return self._size
 	
 	def is_valid_space(self, position):
@@ -43,6 +43,15 @@ class Board(object):
 			if self.is_valid_space(p):
 				yield p
 	
+	def positions(self):
+		for i in range(len(self._board)):
+			yield self._index_as_position(i)
+
+	def open_positions(self):
+		for p in self.positions():
+			if self.piece_at(p) is None:
+				yield p
+
 	def is_match(self, position, piece):
 		if piece is None:
 			raise TypeError("Cannot place a piece of type 'None'")
@@ -66,6 +75,16 @@ class Board(object):
 			if self._index_as_position(i) not in mask:
 				board_copy._board[i] = self._board[i]
 		return board_copy
+
+	def __eq__(self, other):
+		if isinstance(other, Board) and other.size() == self.size():
+			for i in range(len(self._board)):
+				if other.piece_at(self._index_as_position(i)) != self._board[i]:
+					return False
+			else:
+				return True
+		else:
+			return False
 
 class Position(CommonEqualityMixin):
 
@@ -102,9 +121,9 @@ class Position(CommonEqualityMixin):
 		return "<x : {}, y : {}>".format(self._x, self._y)
 
 	def __eq__(self, other):
-		return (isinstance(other, self.__class__)
-		       and self.x() == other.x() 
-		       and self.y() == other.y())
+		return (isinstance(other, Position)
+		        and self.x() == other.x() 
+		        and self.y() == other.y())
 
 	def __lt__(self, other):
 		if not isinstance(other, self.__class__):

@@ -87,5 +87,82 @@ class PositionTest(unittest.TestCase):
 		self.maxDiff = None
 		self.assertItemsEqual([p for p in origin.adjacent()], cardinals)
 
+	def test_position_equality(self):
+		x = Position(0, 0)
+		y = Position(0, 0)
+		self.assertEqual(x, y)
+
+	def test_position_x_differs(self):
+		x = Position(0, 1)
+		y = Position(1, 1)
+		self.assertLess(x, y)
+		self.assertGreater(y, x)
+		self.assertNotEqual(x, y)
+
+	def test_position_y_differs(self):
+		x = Position(1, 0)
+		y = Position(1, 1)
+		self.assertLess(x, y)
+		self.assertGreater(y, x)
+		self.assertNotEqual(x, y)
+
+class BoardTest(unittest.TestCase):
+
+	#Brittle
+	def test_board_piece_at(self):
+		board = Board(size = 2)
+		foo = Foo()
+		board._board[0] = foo
+		self.assertEqual(board.piece_at(Position(0, 0)), foo)
+
+	def test_board_creation(self):
+		board = Board(size = 2)
+		self.assertEqual(board.size(), 2)
+		positions = [Position(0, 0), Position(0, 1), Position(1, 0), Position(0, 0)]
+		for p in positions:
+			self.assertIsNone(board.piece_at(p))
+
+	def test_board_place_piece(self):
+		board = Board(size = 2)
+		origin = Position(0, 0)
+		foo = Foo()
+		board.place_piece(position = origin, piece = foo)
+		self.assertEqual(board.piece_at(origin), foo)
+
+	def test_board_place_piece_when_piece_present(self):
+		board = Board(size = 2)
+		origin = Position(0, 0)
+		foo = Foo()
+		foo2 = Foo()
+		board.place_piece(origin, foo)
+		with self.assertRaises(ValueError):
+			board.place_piece(origin, foo2)
+
+	def test_board_remove_piece(self):
+		board = Board(size = 2)
+		origin = Position(0,0)
+		foo = Foo()
+		board.place_piece(origin, foo)
+		self.assertEqual(board.remove_piece(origin), foo)
+		self.assertIsNone(board.piece_at(origin))
+
+	def test_board_positions(self):
+		board = Board(size = 2)
+		expected_positions = [Position(0, 0), 
+		                      Position(0, 1), 
+		                      Position(1, 0), 
+		                      Position(1, 1)]
+		actual_positions = [p for p in board.positions()]
+		self.assertItemsEqual(actual_positions, expected_positions)
+
+	def test_open_positions(self):
+		board = Board(size = 2)
+		board.place_piece(Position(0, 0), Foo())
+		board.place_piece(Position(1, 1), Foo())
+		expected_positions = [Position(0, 1),
+		                      Position(1, 0)]
+		actual_positions = [p for p in board.open_positions()]
+		self.assertItemsEqual(actual_positions, expected_positions)
+
 if __name__ == '__main__':
     unittest.main()
