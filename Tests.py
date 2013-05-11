@@ -196,5 +196,46 @@ class BoardTest(unittest.TestCase):
 		actual_positions = [p for p in board.adjacent_positions(Position(1, 1))]
 		self.assertItemsEqual(actual_positions, expected_positions)
 
+	def test_board_eq_same_board(self):
+		board = Board(size = 2)
+		board.place_piece(Position(0, 0), Foo())
+		self.assertEqual(board, board)
+
+	def test_board_eq_same_pieces(self):
+		board = Board(size = 2)
+		board.place_piece(Position(0, 0), Foo())
+		board.place_piece(Position(0, 1), Bar())
+		other_board = Board(size = 2)
+		other_board.place_piece(Position(0, 0), Foo())
+		other_board.place_piece(Position(0, 1), Bar())
+		self.assertEqual(board, other_board)
+
+	def test_board_neq_diff_size(self):
+		board = Board(size = 2)
+		board.place_piece(Position(0, 0), Foo())
+		board.place_piece(Position(0, 1), Bar())
+		other_board = Board(size = 3)
+		other_board.place_piece(Position(0, 0), Foo())
+		other_board.place_piece(Position(0, 1), Bar())
+		self.assertNotEqual(board, other_board)
+
+	def test_board_neq_diff_placing(self):
+		board = Board(size = 2)
+		board.place_piece(Position(0, 0), Foo())
+		board.place_piece(Position(0, 1), Bar())
+		other_board = Board(size = 3)
+		other_board.place_piece(Position(0, 1), Foo())
+		other_board.place_piece(Position(1, 1), Bar())
+		self.assertNotEqual(board, other_board)
+
+	def test_copy_of(self):
+		board = Board(size = 3)
+		board.place_piece(Position(0, 0), Foo())
+		board.place_piece(Position(1, 1), Foo())
+		board.place_piece(Position(2, 2), Foo())
+		other_board = board.copy_of()
+		self.assertFalse(other_board is board)
+		self.assertEqual(board, other_board)
+
 if __name__ == '__main__':
     unittest.main()

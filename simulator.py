@@ -71,20 +71,19 @@ class Board(object):
 			
 	def copy_of(self, mask = set()):
 		board_copy = Board(self._size)
-		for i in range(len(self_board)):
+		for i in range(len(self._board)):
 			if self._index_as_position(i) not in mask:
 				board_copy._board[i] = self._board[i]
 		return board_copy
 
 	def __eq__(self, other):
-		if isinstance(other, Board) and other.size() == self.size():
-			for i in range(len(self._board)):
-				if other.piece_at(self._index_as_position(i)) != self._board[i]:
-					return False
-			else:
-				return True
-		else:
+		if not isinstance(other, Board) or other.size() != self.size():
 			return False
+		for i in range(len(self._board)):
+			if other.piece_at(self._index_as_position(i)) != self._board[i]:
+				return False
+		else:
+			return True
 
 class Position(CommonEqualityMixin):
 
@@ -139,7 +138,7 @@ class Queue(object):
 		return None
 		
 	def next_piece():
-		pass
+		return None
 
 class View(object):
 	
